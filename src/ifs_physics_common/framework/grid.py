@@ -88,8 +88,8 @@ class ComputationalGrid:
 
     def __init__(self, nx: int, ny: int, nz: int) -> None:
         self.grids = {
-            (I, J, K): Grid((nx, ny, nz), ("x", "y", "z"), (nx, ny, nz + 1)),
+            (I, J, K): Grid((nx, ny, nz), ("x", "y", "z"), (nx, ny, nz)),
             (I, J, K - 1 / 2): Grid((nx, ny, nz + 1), ("x", "y", "z_h")),
             (I, J): Grid((nx, ny), ("x", "y")),
-            (K,): Grid((nz,), ("z",), (nz + 1,)),
+            (K,): Grid((nz,), ("z",), (nz,)),
         }
