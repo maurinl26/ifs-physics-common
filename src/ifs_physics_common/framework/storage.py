@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     from ifs_physics_common.framework.config import GT4PyConfig
     from ifs_physics_common.framework.grid import ComputationalGrid, DimSymbol
     from ifs_physics_common.utils.typingx import NDArrayLike
+    from sympl._core.typingx import PropertyDict
 
 
 def zeros(
@@ -84,9 +85,15 @@ def allocate_data_array(
     and fill it with zeros.
     """
     buffer = zeros(
-        computational_grid, grid_id, data_shape=data_shape, gt4py_config=gt4py_config, dtype=dtype
+        computational_grid,
+        grid_id,
+        data_shape=data_shape,
+        gt4py_config=gt4py_config,
+        dtype=dtype,
     )
-    return get_data_array(buffer, computational_grid, grid_id, units, data_dims=data_dims)
+    return get_data_array(
+        buffer, computational_grid, grid_id, units, data_dims=data_dims
+    )
 
 
 def get_dtype_from_name(field_name: str) -> Literal["bool", "float", "int"]:
@@ -118,6 +125,27 @@ def get_data_shape_from_name(field_name: str) -> Tuple[int, ...]:
     return out
 
 
+def get_data_shape_from_properties(
+    field_name: str, properties: PropertyDict, computational_grid: ComputationalGrid
+) -> Tuple[int, ...]:
+    """
+        Retrieve the data dimension from component property dict
+    """
+    symbolic_grid = properties[field_name]["grid"]
+    data_dims = computational_grid["grid"][symbolic_grid].shape
+    out = tuple(int(c) for c in data_dims)
+    return out
+
+def get_dtype_from_properties(
+    field_name: str,
+    properties: PropertyDict,
+) -> Literal["int", "float", "bool"]:
+    """
+        Retrieve the datatype of a field from its name.
+    """
+    return properties[field_name]["dtype"]
+
+
 TEMPORARY_STORAGE_POOL: Dict[int, List[NDArrayLike]] = {}
 
 
@@ -145,7 +173,9 @@ def managed_temporary_storage(
         if len(pool) > 0:
             storage = pool.pop()
         else:
-            storage = zeros(computational_grid, grid_id, gt4py_config=gt4py_config, dtype=dtype)
+            storage = zeros(
+                computational_grid, grid_id, gt4py_config=gt4py_config, dtype=dtype
+            )
         grid_hashes.append(grid_hash)
         storages.append(storage)
 

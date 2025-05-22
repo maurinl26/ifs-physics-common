@@ -27,8 +27,8 @@ from sympl._core.core_components import (
 from ifs_physics_common.framework.config import GT4PyConfig
 from ifs_physics_common.framework.stencil import compile_stencil
 from ifs_physics_common.framework.storage import (
-    get_data_shape_from_name,
-    get_dtype_from_name,
+    get_data_shape_from_properties,
+    get_dtype_from_properties,
     zeros,
 )
 
@@ -60,8 +60,15 @@ class ComputationalGridComponent:
         return properties
 
     def allocate(self, name: str, properties: PropertyDict) -> NDArrayLike:
-        data_shape = get_data_shape_from_name(name)
-        dtype = get_dtype_from_name(name)
+        data_shape = get_data_shape_from_properties(
+            name,
+            properties,
+            self.computational_grid
+        )
+        dtype = get_dtype_from_properties(
+            name,
+            properties
+        )
         return zeros(
             self.computational_grid,
             properties[name]["grid"],
