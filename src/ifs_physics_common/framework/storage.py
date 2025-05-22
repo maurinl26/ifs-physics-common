@@ -132,7 +132,7 @@ def get_data_shape_from_properties(
         Retrieve the data dimension from component property dict
     """
     symbolic_grid = properties[field_name]["grid"]
-    data_dims = computational_grid["grid"][symbolic_grid].shape
+    data_dims = computational_grid.grids[symbolic_grid].shape
     out = tuple(int(c) for c in data_dims)
     return out
 
