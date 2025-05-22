@@ -60,11 +60,6 @@ class ComputationalGridComponent:
         return properties
 
     def allocate(self, name: str, properties: PropertyDict) -> NDArrayLike:
-        data_shape = get_data_shape_from_properties(
-            name,
-            properties,
-            self.computational_grid
-        )
         dtype = get_dtype_from_properties(
             name,
             properties
@@ -72,7 +67,6 @@ class ComputationalGridComponent:
         return zeros(
             self.computational_grid,
             properties[name]["grid"],
-            data_shape,
             gt4py_config=self.gt4py_config,
             dtype=dtype,
         )
